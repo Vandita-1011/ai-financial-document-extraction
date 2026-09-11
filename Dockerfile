@@ -1,4 +1,4 @@
-# Multi-stage production Dockerfile for FastAPI + Jinja2 frontend
+# Multi-stage production Dockerfile for FastAPI + Jinja2 frontend (Target: Hugging Face Spaces Docker SDK / Koyeb)
 
 # ==============================================================================
 # Stage 1: Builder
@@ -45,15 +45,15 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY backend /app/backend
 COPY frontend /app/frontend
 
-# Environment variables
-ENV PORT=8000
+# Environment variables (HF Spaces listens on port 7860 by default)
+ENV PORT=7860
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/backend
 
 # Working directory set to /app/backend so uvicorn app.main:app resolves cleanly
 WORKDIR /app/backend
 
-EXPOSE 8000
+EXPOSE 7860
 
-# Shell form exec so ${PORT} expands dynamically at runtime (Koyeb injects $PORT)
+# Shell form exec so ${PORT} expands dynamically at runtime (HF Spaces injects/defaults $PORT to 7860)
 CMD exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
