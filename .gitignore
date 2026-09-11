@@ -1,0 +1,113 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Python
+# ──────────────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Virtual environments
+# ──────────────────────────────────────────────────────────────────────────────
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Secrets — NEVER commit these
+# ──────────────────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ──────────────────────────────────────────────────────────────────────────────
+# IDEs & editors
+# ──────────────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Logs & databases
+# ──────────────────────────────────────────────────────────────────────────────
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Uploads / output artefacts (do not commit sample documents)
+# ──────────────────────────────────────────────────────────────────────────────
+uploads/
+sample_outputs/*.json
+sample_outputs/*.pdf
+
+# Test/sample documents - keep local, do not publish
+backend/tests/fixtures/sample_documents/
+
+# Test/sample documents - keep local, do not publish
+backend/tests/fixtures/sample_documents/
+scratch/
+
+# Local test/debug output
+all_tests.txt
+full_output.txt
+ground_truth.txt
+pytest_full.txt
+pytest_full_capture.txt
+pytest_full_capture2.txt
+pytest_full_output.txt
+pytest_output.txt
+response.json
+smoke_*.json
+smoke_*.txt

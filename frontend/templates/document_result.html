@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Result View - Document Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="header-nav">
+    <a href="/" class="nav-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      Document Intelligence Platform
+    </a>
+    <nav class="nav-links">
+      <a href="/">&larr; Back to Dashboard</a>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container">
+    
+    <!-- Document Name header container (passed from Jinja) -->
+    <div id="document-context" data-document-name="{{ document_name }}"></div>
+
+    <!-- Alert / Error state container -->
+    <div id="error-container"></div>
+
+    <!-- Main Content View (populated by JS) -->
+    <div id="result-view" style="display: none;">
+      
+      <!-- Top Overview Header -->
+      <div class="page-header">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+            <h1 class="page-title" id="doc-title">Document Name</h1>
+            <span id="doc-overall-badge"></span>
+          </div>
+          <p class="page-subtitle" id="doc-subtitle">Document Type</p>
+        </div>
+        <div>
+          <a href="/" class="btn btn-secondary btn-sm">&larr; Back to Dashboard</a>
+        </div>
+      </div>
+
+      <!-- Section 1: File Validation -->
+      <section class="card">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          File Validation
+        </h2>
+        <div class="kv-grid" id="file-validation-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Section 2: Extracted Fields -->
+      <section class="card">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+          Extracted Data Fields
+        </h2>
+        <div class="kv-grid" id="extracted-fields-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Section 3: Line Items / Statement Items Table -->
+      <section class="card" id="line-items-section">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Line Items / Statement Breakdown
+        </h2>
+        <div id="line-items-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Section 4: Financial Validation -->
+      <section class="card">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          Financial Validation Checks
+        </h2>
+        <div class="table-responsive">
+          <table class="data-table" id="validation-table">
+            <thead>
+              <tr>
+                <th>Check Name</th>
+                <th>Formula / Logic</th>
+                <th>Calculated</th>
+                <th>Reported</th>
+                <th>Variance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="validation-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 5: Processing Metadata -->
+      <section class="card">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          Processing Metadata
+        </h2>
+        <div class="kv-grid" id="metadata-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Section 6: Raw JSON View -->
+      <section class="card">
+        <details>
+          <summary style="cursor: pointer; font-weight: 600; font-size: 1.1rem; color: var(--text-primary); outline: none;">
+            <span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              View Raw Structured JSON
+            </span>
+          </summary>
+          <div style="margin-top: 1rem;">
+            <pre class="raw-json"><code id="raw-json-code">Loading...</code></pre>
+          </div>
+        </details>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    Document Intelligence Platform &copy; 2026. All rights reserved.
+  </footer>
+
+  <script src="/static/js/document_result.js"></script>
+</body>
+</html>
