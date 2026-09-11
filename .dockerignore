@@ -1,0 +1,26 @@
+.env
+.env.*
+.git
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.log
+
+# Exclude test dataset to keep container image small
+backend/tests/fixtures/sample_documents/
+scratch/
+sample_outputs/
+all_tests.txt
+full_output.txt
+ground_truth.txt
+pytest_*.txt
+smoke_*.json
+
+# Virtual environments
+venv/
+.venv/
+backend/.venv/
+env/
