@@ -15,8 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install CPU-only PyTorch wheel first to prevent EasyOCR from installing CUDA dependencies (~2GB+)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# Install CPU-only PyTorch and torchvision wheels together to prevent EasyOCR from pulling CUDA torchvision
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
 # Install application dependencies
 COPY requirements.txt .
