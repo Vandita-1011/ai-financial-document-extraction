@@ -133,5 +133,4 @@ The repository layer (`document_repository.py`) provides `save_document`, `get_b
 - **Monitoring**: Integrate Prometheus metrics and Grafana dashboards for request latency and error rates.
 - **Security**: Harden CORS policy for production and rotate API keys regularly.
 
-## 14. AI Tool Usage Declaration
-*Planning* for this README was performed with **Claude**. The *implementation* was carried out by **Antigravity** as the implementation agent.
+
