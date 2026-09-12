@@ -87,11 +87,9 @@ Interactive API docs: http://localhost:8000/docs
 | `MAX_UPLOAD_PAGES` | ❌       | `3`           | Maximum pages per uploaded document           |
 | `APP_ENV`          | ❌       | `development` | Deployment environment                        |
 
-## OCR Engine — EasyOCR
+## OCR Engine — Tesseract OCR
 
-The service uses **EasyOCR** for text extraction fallback on scanned/image-based documents.
-
-> **Cold Start Note:** EasyOCR automatically downloads its language model weights (~a few hundred MB) on first run. Internet access is required during this initial execution. The model is cached locally for subsequent runs. This cold-start download applies both locally and during the first startup on server deployment.
+The service uses **PyMuPDF** for primary native PDF text extraction, with **Tesseract OCR** as an automated fallback for scanned/image-based PDF pages and standalone image files (JPEG/PNG).
 
 
 ## API Endpoints

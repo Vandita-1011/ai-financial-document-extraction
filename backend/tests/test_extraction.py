@@ -116,17 +116,18 @@ def _blank_pdf() -> bytes:
 
 # ── Skip guard ────────────────────────────────────────────────────────────────
 
-def _easyocr_available() -> bool:
+def _tesseract_available() -> bool:
     try:
-        import easyocr  # noqa: F401
+        import pytesseract
+        pytesseract.get_tesseract_version()
         return True
-    except ImportError:
+    except Exception:
         return False
 
 
-SKIP_IF_NO_EASYOCR = pytest.mark.skipif(
-    not _easyocr_available(),
-    reason="EasyOCR package is not installed."
+SKIP_IF_NO_TESSERACT = pytest.mark.skipif(
+    not _tesseract_available(),
+    reason="Tesseract OCR binary is not installed or available on PATH."
 )
 
 
@@ -157,9 +158,9 @@ class TestNativePDF(unittest.TestCase):
         self.assertIn("Hello World", result["pages"][0]["text"])
 
 
-@SKIP_IF_NO_EASYOCR
+@SKIP_IF_NO_TESSERACT
 class TestScannedPNG(unittest.TestCase):
-    """PNG image — always uses EasyOCR."""
+    """PNG image — always uses Tesseract OCR."""
 
     def test_ocr_used_is_true(self):
         result = extract_text(_image_png(), "image/png")
@@ -182,9 +183,9 @@ class TestScannedPNG(unittest.TestCase):
         self.assertIsInstance(result["pages"][0]["text"], str)
 
 
-@SKIP_IF_NO_EASYOCR
+@SKIP_IF_NO_TESSERACT
 class TestScannedJPEG(unittest.TestCase):
-    """JPEG image — always uses EasyOCR."""
+    """JPEG image — always uses Tesseract OCR."""
 
     def test_ocr_used_is_true(self):
         result = extract_text(_image_jpeg(), "image/jpeg")
@@ -195,7 +196,7 @@ class TestScannedJPEG(unittest.TestCase):
         self.assertEqual(len(result["pages"]), 1)
 
 
-@SKIP_IF_NO_EASYOCR
+@SKIP_IF_NO_TESSERACT
 class TestScannedPDF(unittest.TestCase):
     """PDF whose page has only an embedded image — should fall back to OCR."""
 
@@ -217,7 +218,7 @@ class TestScannedPDF(unittest.TestCase):
         self.assertIsInstance(self.result["pages"][0]["text"], str)
 
 
-@SKIP_IF_NO_EASYOCR
+@SKIP_IF_NO_TESSERACT
 class TestMultiPagePDF(unittest.TestCase):
     """2-page PDF: p1 native text, p2 image-only."""
 

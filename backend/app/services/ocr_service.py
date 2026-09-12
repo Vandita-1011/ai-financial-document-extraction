@@ -9,10 +9,10 @@ PDF pages
     1. Native text extraction via PyMuPDF ``page.get_text()``.
     2. If the native result is below a minimum character threshold (the page is
        likely scanned / image-only), render the page to a pixmap and run
-       EasyOCR as a fallback.  ``ocr_used = True`` for that page.
+       Tesseract OCR as a fallback. ``ocr_used = True`` for that page.
 
 JPEG / PNG
-    Always run EasyOCR directly (single page, ``ocr_used = True``).
+    Always run Tesseract OCR directly (single page, ``ocr_used = True``).
 
 Return value
 ------------
@@ -25,12 +25,6 @@ A dict with two keys::
         ],
         "ocr_used": False   # True if ANY page used OCR
     }
-
-Note on EasyOCR
----------------
-EasyOCR downloads its OCR model weights (~a few hundred MB) on first run.
-The ``easyocr.Reader`` instance is lazy-initialized as a module singleton
-to avoid the heavy initialization cost on every request.
 """
 
 from __future__ import annotations
@@ -39,7 +33,7 @@ import io
 from typing import TypedDict
 
 import fitz  # PyMuPDF
-import numpy as np
+import pytesseract
 from PIL import Image
 
 from app.core.logging import get_logger
@@ -49,27 +43,12 @@ logger = get_logger(__name__)
 # ── Tuning constants ────────────────────────────────────────────────────────
 
 # Pages whose native-extracted text is shorter than this threshold are treated
-# as scanned/image-only and sent through EasyOCR instead.
+# as scanned/image-only and sent through Tesseract OCR instead.
 _NATIVE_TEXT_MIN_CHARS: int = 10
 
-# DPI used when rasterising a PDF page for OCR (higher = better quality,
-# slower; 200 is a good balance for A4 / letter documents).
-_OCR_RENDER_DPI: int = 200
-
-
-# ── Lazy-initialized EasyOCR Singleton ───────────────────────────────────────
-
-_EASYOCR_READER = None
-
-
-def _get_ocr_reader():
-    """Lazy-initialize and return the shared EasyOCR Reader instance."""
-    global _EASYOCR_READER
-    if _EASYOCR_READER is None:
-        import easyocr
-        logger.info("Initializing EasyOCR reader (one-time model load)...")
-        _EASYOCR_READER = easyocr.Reader(["en"], gpu=False)
-    return _EASYOCR_READER
+# DPI used when rasterising a PDF page for OCR (150 DPI balances text clarity
+# for financial documents with minimal RAM footprint on memory-constrained hosts).
+_OCR_RENDER_DPI: int = 150
 
 
 # ── Public types ─────────────────────────────────────────────────────────────
@@ -138,7 +117,7 @@ def _extract_pdf(file_bytes: bytes) -> list[PageResult]:
                 PageResult(page_number=page_num, text=native_text, ocr_used=False)
             )
         else:
-            # Page appears to be scanned — render and run EasyOCR
+            # Page appears to be scanned — render and run Tesseract OCR
             logger.debug(
                 "Page %d: native text too short (%d chars) → falling back to OCR.",
                 page_num,
@@ -154,7 +133,7 @@ def _extract_pdf(file_bytes: bytes) -> list[PageResult]:
 
 
 def _ocr_pdf_page(page: fitz.Page, page_num: int) -> str:
-    """Render *page* to a PIL image and run EasyOCR on it."""
+    """Render *page* to a PIL image and run Tesseract OCR on it."""
     zoom = _OCR_RENDER_DPI / 72.0
     mat = fitz.Matrix(zoom, zoom)
     pix = page.get_pixmap(matrix=mat, alpha=False)
@@ -166,28 +145,25 @@ def _ocr_pdf_page(page: fitz.Page, page_num: int) -> str:
 # ── Image extraction ──────────────────────────────────────────────────────────
 
 def _extract_image(file_bytes: bytes) -> list[PageResult]:
-    """Run EasyOCR on a JPEG or PNG image (always a single page)."""
+    """Run Tesseract OCR on a JPEG or PNG image (always a single page)."""
     img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
     text = _run_ocr(img, page_num=1)
     return [PageResult(page_number=1, text=text, ocr_used=True)]
 
 
-# ── Shared EasyOCR helper ─────────────────────────────────────────────────────
+# ── Shared Tesseract OCR helper ───────────────────────────────────────────────
 
 def _run_ocr(img: Image.Image, page_num: int) -> str:
-    """Run EasyOCR on *img* and return the cleaned text string.
+    """Run Tesseract OCR on *img* and return the cleaned text string.
 
-    Never raises on empty scan — returns empty string and logs a warning so
-    the caller can continue processing remaining pages.
+    Never raises on empty scan or Tesseract failure — returns empty string and logs
+    a warning so the caller can continue processing remaining pages.
     """
     try:
-        reader = _get_ocr_reader()
-        img_np = np.array(img)
-        ocr_results = reader.readtext(img_np, detail=0, paragraph=True)
-        text = " ".join(ocr_results).strip()
+        text = pytesseract.image_to_string(img, config="--oem 3 --psm 6").strip()
     except Exception as exc:
         logger.warning(
-            "Page %d: EasyOCR failed (%s). Returning empty string.",
+            "Page %d: Tesseract OCR failed (%s). Returning empty string.",
             page_num,
             exc,
         )
