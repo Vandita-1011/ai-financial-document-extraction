@@ -22,6 +22,9 @@ RUN pip install --no-cache-dir torch torchvision --index-url https://download.py
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Pre-download EasyOCR English models into /root/.EasyOCR during image build
+RUN python -c "import easyocr; easyocr.Reader(['en'], gpu=False)"
+
 # ==============================================================================
 # Stage 2: Runner
 # ==============================================================================
@@ -40,6 +43,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy installed site-packages and binaries from builder
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy pre-downloaded EasyOCR models from builder stage
+COPY --from=builder /root/.EasyOCR /root/.EasyOCR
 
 # Copy project backend and frontend code
 COPY backend /app/backend
