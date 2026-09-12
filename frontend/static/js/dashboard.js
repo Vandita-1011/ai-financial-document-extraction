@@ -46,11 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
           const docName = data.document_name;
           const viewUrl = `/documents/${encodeURIComponent(docName)}/view`;
-          
-          showAlert(
-            `Document "${escapeHtml(docName)}" processed successfully! <a href="${viewUrl}" style="color: #86efac; font-weight: 600; underline: underline; margin-left: 0.5rem;">View Results &rarr;</a>`,
-            'success'
-          );
+          const overallStatus = data.validation && data.validation.overall_status
+            ? data.validation.overall_status.toUpperCase()
+            : null;
+
+          if (overallStatus === 'FAIL' || overallStatus === 'FAILED') {
+            showAlert(
+              `Document \"${escapeHtml(docName)}\" was processed, but financial validation <strong>FAILED</strong>. <a href="${viewUrl}" style="color: #fbbf24; font-weight: 600; margin-left: 0.5rem;">View Details &rarr;</a>`,
+              'warning'
+            );
+          } else {
+            showAlert(
+              `Document \"${escapeHtml(docName)}\" processed successfully! <a href="${viewUrl}" style="color: #86efac; font-weight: 600; underline: underline; margin-left: 0.5rem;">View Results &rarr;</a>`,
+              'success'
+            );
+          }
 
           uploadForm.reset();
           await loadDocuments();
@@ -63,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           showAlert(errorMsg, 'error');
         }
+
       } catch (err) {
         console.error('Fetch error:', err);
         showAlert(`Network error: ${err.message || 'Failed to connect to backend server.'}`, 'error');

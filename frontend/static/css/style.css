@@ -364,6 +364,12 @@ body {
   color: #86efac;
 }
 
+.alert-warning {
+  background-color: rgba(120, 53, 15, 0.4);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
 .alert-info {
   background-color: rgba(30, 58, 138, 0.4);
   border-color: #3b82f6;

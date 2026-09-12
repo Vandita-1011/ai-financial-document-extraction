@@ -48,6 +48,7 @@ VALID_DOCUMENT_TYPES = {
     "invoice": "invoice",
     "balance_sheet": "balance_sheet",
     "profit_and_loss": "profit_and_loss",
+    "profit_loss": "profit_and_loss",  # alias: tolerate common shorthand
     "p&l": "profit_and_loss",
     "cash_flow": "cash_flow_statement",
     "cash_flow_statement": "cash_flow_statement",
